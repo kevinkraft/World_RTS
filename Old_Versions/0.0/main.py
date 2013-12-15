@@ -1,5 +1,5 @@
 #World_RTS
-#Version: 0.1
+#Version: 0.0
 #
 #Kevin Maguire
 #15/12/13
@@ -23,14 +23,13 @@ screen_width = 480
 screen_height = 480
 tiles_per_side = 10
 tile_width = (((screen_width)/tiles_per_side))
+print tile_width
 tile_height = (((screen_height)/tiles_per_side))
 OLIVE = (107, 142, 35)
 BLACK = (0, 0, 0)
-BLUE = (0, 0, 205)
-GREY = (105, 105, 105)
 line_width = 2
 simple_map = [[2, 2, 1, 1, 1, 1, 1, 1, 0, 0],[2, 2, 1, 1, 1, 1, 1, 1, 0, 0],[2, 2, 1, 1, 1, 1, 1, 1, 0, 0],
-              [2, 2, 1, 1, 1, 1, 1, 1, 0, 0],[2, 2, 1, 1, 0, 1, 1, 1, 0, 0],[2, 2, 1, 1, 1, 1, 1, 1, 0, 0],
+              [2, 2, 1, 1, 1, 1, 1, 1, 0, 0],[2, 2, 1, 1, 1, 1, 1, 1, 0, 0],[2, 2, 1, 1, 1, 1, 1, 1, 0, 0],
               [2, 2, 1, 1, 1, 1, 1, 1, 0, 0],[2, 2, 1, 1, 1, 1, 1, 1, 0, 0],[2, 2, 1, 1, 1, 1, 1, 1, 0, 0],
               [2, 2, 1, 1, 1, 1, 1, 1, 0, 0]]
 
@@ -43,32 +42,23 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption('World RTS')
-
-    #set top corner of tile_positions
-    coord_trans = []
-    for j in range(0, tiles_per_side):
-        coord_trans_in = []
-        for i in range(0, tiles_per_side):
-            coord = [(tile_width)*(i), (tile_height)*(j)]
-            coord_trans_in.append(coord)
-        coord_trans.append(coord_trans_in)
     
+
     #make tiles
     tile_list = []
-    for j in range(0, tiles_per_side):
-        tile_list_in = []
-        for i in range(0, tiles_per_side):
-            tile = the_map.tile(coord_trans[i][j], [i,j], simple_map[i][j])
-            tile.draw_tile(screen, tile_width, tile_height)
-            tile_list_in.append(tile)
-        tile_list.append(tile_list_in)
+    for i in range(1, tiles_per_side + 1):
+        for j in range(1, tiles_per_side + 1):
+            tile.tile()
+
 
     #background = pygame.Surface(screen.get_size())
     #background = background.convert()
     #background.fill(OLIVE) #temporary green olive drab - 107-142-35
     screen.fill(OLIVE) 
+    draw_lines(screen)
+    
+    
 
-        
     #Display some text
     #font = pygame.font.Font(None, 36)
     #text = font.render("Hello There", 1, (10, 10, 10))
@@ -86,18 +76,28 @@ def main():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
-                        
+                
+        #mos_x, mos_y = pygame.mouse.get_pos()
+        
 
-        for j in range(0, len(tile_list)):
-            tile_list_in = tile_list[j] 
-            for i in range(0, len(tile_list_in)):
-                tile = tile_list_in[i]
-                tile.draw_tile(screen, tile_width, tile_height)
-        pygame.display.flip()
-
+    #screen.blit(background, (0, 0))
     pygame.display.flip()
 
 
+def draw_lines(screen):
+    pointlist = []
+    for i in range(0, tiles_per_side + 1):
+        shift = (tile_width)*(i)
+        pointlist = [[shift, 0], [shift, screen_height]]
+        pygame.draw.lines(screen, BLACK, False, pointlist, line_width)
+    for i in range(0, tiles_per_side + 1):
+        shift = (tile_height)*(i)
+        pointlist = [[0, shift], [screen_width, shift]]
+        pygame.draw.lines(screen, BLACK, False, pointlist, line_width)
+
+def highlight_square():
+    #add this
+    return
     
 
 main()
