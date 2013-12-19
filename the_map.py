@@ -15,10 +15,11 @@ class tile(object):
     for map tiles, to contain everything to do with a tile, resources, sprites etc.
 
     """
-    def __init__(self, screen_pos, grid_pos, terrain_type):
+    def __init__(self, screen_pos, grid_pos, terrain_type, tile_surface = pygame.Surface((2,2))): #temporary tile_surface, reassigned later
         self.screen_pos = screen_pos
         self.grid_pos = grid_pos
         self.terrain_type = terrain_type
+        self.surface = tile_surface
 
     def get_colour(self):
         if self.terrain_type == 0:
@@ -29,8 +30,11 @@ class tile(object):
             colour = GREY
         return colour
 
-    def draw_tile(self, screen, tile_width, tile_height):
-        tile_surface = pygame.Surface((tile_width, tile_height))
+    def draw_tile(self, screen, tile_width, tile_height, line_width, line_colour): #includes highlight
+        self.surface = pygame.Surface((tile_width, tile_height))
         colour = self.get_colour()
-        pygame.draw.rect(tile_surface, colour, [0, 0, tile_width, tile_height])
-        screen.blit(tile_surface, self.screen_pos)
+        pygame.draw.rect(self.surface, colour, [0, 0, tile_width, tile_height])
+        pointlist = [[0 ,0], [tile_width, 0], [tile_width, tile_height], [0, tile_height], [0, 0]]
+        pygame.draw.lines(self.surface, line_colour, False, pointlist, line_width)
+        screen.blit(self.surface, self.screen_pos)
+

@@ -5,9 +5,12 @@
 #15/12/13
 #
 #Add:
-#  highlight tile
-#  print tiles to map
-
+#  highlight tile (done)
+#  print tiles to map (done)
+#  grid (done)
+#  maybe add xy coords onto screen
+#  Menu when tile is clicked
+#  Menu which is specific to that tile. 
 
 import sys
 import pygame
@@ -16,7 +19,7 @@ import the_map
 
 """
 
-sim parameters
+game parameters
 
 """
 screen_width = 480
@@ -28,9 +31,10 @@ OLIVE = (107, 142, 35)
 BLACK = (0, 0, 0)
 BLUE = (0, 0, 205)
 GREY = (105, 105, 105)
-line_width = 2
+HIGHLIGHT_BLUE = (0, 191, 255)
+line_width = 3
 simple_map = [[2, 2, 1, 1, 1, 1, 1, 1, 0, 0],[2, 2, 1, 1, 1, 1, 1, 1, 0, 0],[2, 2, 1, 1, 1, 1, 1, 1, 0, 0],
-              [2, 2, 1, 1, 1, 1, 1, 1, 0, 0],[2, 2, 1, 1, 0, 1, 1, 1, 0, 0],[2, 2, 1, 1, 1, 1, 1, 1, 0, 0],
+              [2, 2, 1, 1, 1, 1, 1, 1, 0, 0],[2, 2, 1, 1, 0, 1, 1, 1, 0, 0],[2, 2, 1, 1, 1, 0, 1, 1, 0, 0],
               [2, 2, 1, 1, 1, 1, 1, 1, 0, 0],[2, 2, 1, 1, 1, 1, 1, 1, 0, 0],[2, 2, 1, 1, 1, 1, 1, 1, 0, 0],
               [2, 2, 1, 1, 1, 1, 1, 1, 0, 0]]
 
@@ -58,16 +62,10 @@ def main():
     for j in range(0, tiles_per_side):
         tile_list_in = []
         for i in range(0, tiles_per_side):
-            tile = the_map.tile(coord_trans[i][j], [i,j], simple_map[i][j])
-            tile.draw_tile(screen, tile_width, tile_height)
+            tile = the_map.tile(coord_trans[i][j], [i,j], simple_map[i][j]) #scree_pos, gird_pos, terrain_type, (opt) surface
+            tile.draw_tile(screen, tile_width, tile_height, line_width, BLACK)
             tile_list_in.append(tile)
         tile_list.append(tile_list_in)
-
-    #background = pygame.Surface(screen.get_size())
-    #background = background.convert()
-    #background.fill(OLIVE) #temporary green olive drab - 107-142-35
-    screen.fill(OLIVE) 
-
         
     #Display some text
     #font = pygame.font.Font(None, 36)
@@ -76,29 +74,32 @@ def main():
     #textpos.centerx = background.get_rect().centerx
     #background.blit(text, textpos)
 
-    #Blit everything to the screen
-    #screen.blit(background, (0, 0))
     pygame.display.flip()
 
     #Event loop
     while 1:
+
+        #redraw tiles with highlight
+        for j in range(0, len(tile_list)):
+            tile_list_in = tile_list[j]
+            for i in range(0, len(tile_list_in)):
+                tile = tile_list_in[i]
+                if tile.surface.get_rect(topleft = tile.screen_pos).collidepoint(pygame.mouse.get_pos()):
+                    line_colour = HIGHLIGHT_BLUE
+                    grid_line_width = 2*(line_width)
+                else:
+                    line_colour = BLACK
+                    grid_line_width = line_width
+                tile.draw_tile(screen, tile_width, tile_height, grid_line_width, line_colour)
+        pygame.display.flip()
+
+        #events
         for event in pygame.event.get():
+            #quit game
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
-                        
-
-        for j in range(0, len(tile_list)):
-            tile_list_in = tile_list[j] 
-            for i in range(0, len(tile_list_in)):
-                tile = tile_list_in[i]
-                tile.draw_tile(screen, tile_width, tile_height)
-        pygame.display.flip()
-
-    pygame.display.flip()
-
-
-    
+        
 
 main()
 
