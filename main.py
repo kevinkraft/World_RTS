@@ -11,6 +11,8 @@
 #  maybe add xy coords onto screen
 #  Menu when tile is clicked
 #  Menu which is specific to that tile. 
+#  Zoom and scroll. Big Job, wont be fun. 
+#  on screen time
 
 import sys
 import pygame
@@ -75,6 +77,12 @@ def main():
     #background.blit(text, textpos)
 
     pygame.display.flip()
+    
+    #start clock
+    clock = pygame.time.Clock()
+    minutes = 0
+    seconds = 0
+    milliseconds = 0
 
     #Event loop
     while 1:
@@ -91,7 +99,6 @@ def main():
                     line_colour = BLACK
                     grid_line_width = line_width
                 tile.draw_tile(screen, tile_width, tile_height, grid_line_width, line_colour)
-        pygame.display.flip()
 
         #events
         for event in pygame.event.get():
@@ -100,6 +107,20 @@ def main():
                 pygame.quit()
                 sys.exit()
         
+        pygame.display.flip()
+
+        #timing
+        if milliseconds > 1000:
+            seconds += 1
+            milliseconds -= 1000
+        if seconds > 60:
+            minutes += 1
+            seconds -= 60
+
+        print ("{}:{}".format(minutes, seconds))
+
+        milliseconds += clock.tick_busy_loop() #returns time since the last call, limits the frame rate to 60FPS
+
 
 main()
 
