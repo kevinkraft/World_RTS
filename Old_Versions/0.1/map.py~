@@ -1,0 +1,7 @@
+class tile(object):
+    """
+
+    for map tiles, to contain everything to do with a tile, resources, sprites etc.
+
+    """
+    def _init_:
