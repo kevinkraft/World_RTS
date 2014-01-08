@@ -33,24 +33,8 @@ class tile(object):
     def draw_tile(self, screen, tile_width, tile_height, line_width, line_colour): #includes highlight
         self.surface = pygame.Surface((tile_width, tile_height))
         colour = self.get_colour()
-        pygame.draw.rect(self.surface, colour, [0, 0, tile_width, tile_height]) #[x,y,width height]
+        pygame.draw.rect(self.surface, colour, [0, 0, tile_width, tile_height])
         pointlist = [[0 ,0], [tile_width, 0], [tile_width, tile_height], [0, tile_height], [0, 0]]
         pygame.draw.lines(self.surface, line_colour, False, pointlist, line_width)
         screen.blit(self.surface, self.screen_pos)
 
-def zoom_in(tiles_per_side, tiles_per_side_GLOBAL, topleft_grid, tile_list):
-    tiles_per_side = tiles_per_side/2
-    if tiles_per_side == 0:
-        tiles_per_side = 1
-    zoom_tile_list = get_zoom_tile_list(topleft_grid, tile_list)
-    return (tiles_per_side, tile_list)
-
-def zoom_out(tiles_per_side, tiles_per_side_GLOBAL, topleft_grid, tile_list):
-    tiles_per_side = 2*tiles_per_side
-    if tiles_per_side > tiles_per_side_GLOBAL:
-        tiles_per_side = tiles_per_side_GLOBAL
-    zoom_tile_list = get_zoom_tile_list(topleft_grid, tile_list)
-    return (tiles_per_side, tile_list)
-
-def get_zoom_tile_list(topleft_grid, tile_list):
-    return tile_list
