@@ -24,9 +24,7 @@
 #    then scroll will be the reassignment of zoom_top_left_corner
 #  on screen time(done)
 #  add tool bars to bottom and top
-#
-#Problems:
-#  in the_map.py coord is not the (i,j)th coord of coord_trans so program fails when we try to get zoom_tile_list when topleft_grid doesn't equ   al [0, 0]
+
 import sys
 import pygame
 from pygame.locals import *
@@ -218,6 +216,7 @@ def main():
             if event.type == pygame.MOUSEBUTTONUP:
                 #zoom in
                 if zoom_in_textpos.collidepoint(pygame.mouse.get_pos()):
+                    print ("ZOOM IN")
                     tiles_per_side, zoom_tile_list, tile_width, tile_height = the_map.zoom_in(tiles_per_side,
                                                                                               tiles_per_side_GLOBAL,
                                                                                               topleft_grid,
@@ -229,6 +228,7 @@ def main():
                                                                                               toolbar_height)
                 #zoom out
                 if zoom_out_textpos.collidepoint(pygame.mouse.get_pos()):
+                    print ("ZOOM OUT")
                     tiles_per_side, zoom_tile_list, tile_width, tile_height = the_map.zoom_out(tiles_per_side,
                                                                                                tiles_per_side_GLOBAL,
                                                                                                topleft_grid,
@@ -238,55 +238,7 @@ def main():
                                                                                                screen,
                                                                                                line_width,
                                                                                                toolbar_height)
-
-            #scroll
-            if event.type == pygame.KEYDOWN:
-                #up
-                if event.key == pygame.K_w:
-                    topleft_grid[1] = topleft_grid[1] - 1  
-                #down
-                if event.key == pygame.K_s:
-                    topleft_grid[1] = topleft_grid[1] + 1  
-                #left
-                if event.key == pygame.K_a:
-                    topleft_grid[0] = topleft_grid[0] - 1  
-                #right
-                if event.key == pygame.K_d:
-                    topleft_grid[0] = topleft_grid[0] + 1  
-                print topleft_grid
                 
-                #remake list with new topleft_grid and redraw
-                zoom_tile_list = the_map.get_zoom_tile_list(topleft_grid,
-                                                            tiles_per_side,
-                                                            tile_list,
-                                                            tile_width,
-                                                            tile_height,
-                                                            screen,
-                                                            line_width,
-                                                            toolbar_height)
-
-                #################################################################
-                #can do this better
-                #tiles_per_side, zoom_tile_list, tile_width, tile_height = the_map.zoom_in(tiles_per_side,
-                #                                                                          tiles_per_side_GLOBAL,
-                #                                                                          topleft_grid,
-                #                                                                          tile_list,
-                #                                                                          screen_width,
-                #                                                                          screen_height, 
-                #                                                                          screen,
-                #                                                                          line_width,
-                #                                                                          toolbar_height)
-                #
-                #tiles_per_side, zoom_tile_list, tile_width, tile_height = the_map.zoom_out(tiles_per_side,
-                #                                                                           tiles_per_side_GLOBAL,
-                #                                                                           topleft_grid,
-                #                                                                           tile_list,
-                #                                                                           screen_width,
-                #                                                                           screen_height,
-                #                                                                           screen,
-                #                                                                           line_width,
-                #                                                                           toolbar_height)
-
         pygame.display.flip()
 
 main()
