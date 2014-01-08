@@ -64,10 +64,10 @@ def get_zoom_tile_list(topleft_grid, tiles_per_side, tile_list, tile_width, tile
     #set top corner of tile pos
     coord_trans = [] #screen_pos of tiles in array which does not represent the grid pos of the tiles used
     for j in range(topleft_grid[1], tiles_per_side + topleft_grid[1]):
-        print "first j is %i" %j
+        #print "first j is %i" %j
         coord_trans_in = []
         for i in range(topleft_grid[0], tiles_per_side + topleft_grid[0]):
-            print "first i is %i" %i
+            #print "first i is %i" %i
             coord = [(tile_width)*(i), (tile_height)*(j) + toolbar_height] #THIS IS NOT THE (i, j)TH COORD OF coord_trans
             coord_trans_in.append(coord)
         coord_trans.append(coord_trans_in)
@@ -76,20 +76,27 @@ def get_zoom_tile_list(topleft_grid, tiles_per_side, tile_list, tile_width, tile
     print len(coord_trans[0])
     
     #fill screen to cover up rounding error which causes the old screen to be visible behind the new screen 
-    screen.fill(BROWN)
+    screen.fill(BROWN) 
     
     zoom_tile_list = []
+    i = 0
+    j = 0
     for k in range(topleft_grid[1], tiles_per_side + topleft_grid[1]):
-        print "second k is %i" %k
+        print "j is %i" %j
+        #print "second k is %i" %k
         tile_list_in = tile_list[k]
         zoom_tile_list_in = []
         for l in range(topleft_grid[0], tiles_per_side + topleft_grid[0]):
-            print "second l is %i" %l
+            print "i is %i" %i
+            #print "second l is %i" %l
             tile = tile_list_in[l]
-            tile.screen_pos = coord_trans[l][k]
+            tile.screen_pos = coord_trans[i][j]
             tile.draw_tile(screen, tile_width, tile_height, line_width, BLACK)
             zoom_tile_list_in.append(tile)
+            i += 1
         zoom_tile_list.append(zoom_tile_list_in)
+        i = 0
+        j += 1
 
     ##################################################################
     #this is another attempt, it doesnt work 
