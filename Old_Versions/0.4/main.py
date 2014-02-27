@@ -1,22 +1,33 @@
 #World_RTS
-#Version: 0.5
-#made from version 0.3
+#Version: 0.4
 #
 #Kevin Maguire
 #15/12/13
 #
 #Add:
+#  highlight tile (done)
+#  print tiles to map (done)
+#  grid (done)
 #  maybe add xy coords onto screen
 #  Menu when tile is clicked
 #  Menu which is specific to that tile. 
-#  Zoom(done) and scroll
+#  Zoom and scroll
 #    start with making new bigger map size, 30x30 (done)
 #    make tiles per side a variable of zoom (done)
-#    use top left corner of screen and tiles per side as the two zoom variables (done)
-#    screen_pos of all tiles are adjusted to new values of tile width and height (done)
-#  returning new_tile_ist in zoom and scroll function is unnecessary, get rid of it
-#    try zoom with tiles_per_side = 1 to see if changing the name of get_new_tile_list helped speed things up, and removing the returned list  
-
+#    use top left corner of screen and tiles per side as the two zoom variables
+#      The screen_pos atribute of a tile will be reassigned for tiles which will apear on screen, and called to print that tile to the screen.        the screen_pos atribute for those tiles not on the screen will not be reassigned after zoom but will not be called(done)
+#    Need to change the value of tile width and height in some function(done)
+#    reassign tile.screen_pos in main event loop, or maybe in zoom function(done)
+#    The tile highlight loop uses tile.surface so we need to remake the surfaces before we get to tile highlight(done)
+#      To solve this we can redraw the tiles without a highlight in the zoom function before tile highlight loop(done)
+#    write function that makes a zoom_tile_list of those tiles to be displayed on screen(done)
+#    then scroll will be the reassignment of zoom_top_left_corner
+#  on screen time(done)
+#  add tool bars to bottom and top
+#
+#Problems:
+#  in the_map.py coord is not the (i,j)th coord of coord_trans so program fails when we try to get zoom_tile_list when topleft_grid doesn't equ   al [0, 0] (fixed)
+#  Scroll is messed up. when you move one way it doesn't print the tiles which are not printed in the original zoom, seems to move diagonaly in   stead of up down left right. BIG PROBLEMS. 
 import sys
 import pygame
 from pygame.locals import *
@@ -39,7 +50,7 @@ GREY = (105, 105, 105)
 HIGHLIGHT_BLUE = (0, 191, 255)
 BROWN = (139, 69, 19)
 WHITE = (255, 255, 255)
-line_width = 2
+line_width = 3
 big_map = [[2, 2, 1, 1, 1, 1, 1, 1, 0, 0, 2, 2, 1, 1, 1, 1, 1, 1, 0, 0, 2, 2, 1, 1, 1, 1, 1, 1, 0, 0],
            [2, 2, 1, 1, 1, 1, 1, 1, 0, 0, 2, 2, 1, 1, 1, 1, 1, 1, 0, 0, 2, 2, 1, 0, 0, 0, 1, 1, 0, 0],
            [2, 2, 1, 1, 0, 1, 1, 1, 0, 0, 2, 2, 1, 0, 0, 0, 1, 1, 0, 0, 2, 2, 1, 1, 1, 0, 1, 1, 0, 0],
@@ -70,6 +81,7 @@ big_map = [[2, 2, 1, 1, 1, 1, 1, 1, 0, 0, 2, 2, 1, 1, 1, 1, 1, 1, 0, 0, 2, 2, 1,
            [2, 2, 1, 0, 1, 1, 1, 1, 0, 0, 2, 2, 1, 0, 1, 0, 1, 1, 0, 0, 2, 2, 1, 1, 1, 0, 1, 1, 0, 0],
            [2, 2, 1, 1, 1, 1, 1, 1, 0, 0, 2, 2, 1, 0, 0, 0, 1, 1, 0, 0, 2, 2, 1, 1, 1, 1, 1, 1, 0, 0],
            [2, 2, 1, 1, 1, 1, 1, 1, 0, 0, 2, 2, 1, 1, 1, 1, 1, 1, 0, 0, 2, 2, 1, 1, 1, 1, 1, 1, 0, 0]]
+
 simple_map = [[2, 2, 1, 1, 1, 1, 1, 1, 0, 0],
               [2, 2, 1, 1, 1, 1, 1, 1, 0, 0],
               [2, 2, 1, 1, 1, 1, 1, 1, 0, 0],
@@ -98,6 +110,7 @@ def main():
     pygame.display.set_caption('World RTS')
 
     #set top corner of tile_positions with initial zoom
+    zoom_top_corner = [0, 0]
     coord_trans = [] #arrary of the top left corner of screen coords of each tile in the corresponding grid coords
     for j in range(0, tiles_per_side):
         coord_trans_in = []
@@ -115,6 +128,7 @@ def main():
             tile.draw_tile(screen, tile_width, tile_height, line_width, BLACK)
             tile_list_in.append(tile)
         tile_list.append(tile_list_in)
+    zoom_tile_list = tile_list
             
     #Display some text
     #font = pygame.font.Font(None, 36)
@@ -124,7 +138,7 @@ def main():
     #background.blit(text, textpos)
 
     #set up zoom
-    topleft_grid_onscreen = [0, 0]
+    topleft_grid = [0, 0]
     font = pygame.font.Font(None, 50)
     zoom_in_text = font.render("+", 1, BLACK)
     zoom_out_text = font.render("-", 1, BLACK)
@@ -139,6 +153,10 @@ def main():
     zoom_out_textpos.centerx = zoom_out_x
     zoom_out_textpos.centery = zoom_out_y
     button_width = 25 #only clicking in the center of the button makes it work
+    #zoom_in_surf = pygame.Surface((button_width, button_width))
+    #zoom_out_surf = pygame.Surface((button_width, button_width))
+    #zoom_in_surf.get_rect(topleft = (zoom_in_x - 12, zoom_in_y - 6))
+    #zoom_out_surf.get_rect(topleft = (zoom_out_x - 12, zoom_out_y - 9))
 
     #set up clock
     time_font = pygame.font.Font(None, 36)
@@ -155,10 +173,10 @@ def main():
     while 1:
 
         #redraw tiles with highlight
-        for j in range(0, len(tile_list)):
-            tile_list_in = tile_list[j]
-            for i in range(0, len(tile_list_in)):
-                tile = tile_list_in[i]
+        for j in range(0, len(zoom_tile_list)):
+            zoom_tile_list_in = zoom_tile_list[j]
+            for i in range(0, len(zoom_tile_list_in)):
+                tile = zoom_tile_list_in[i]
                 if tile.surface.get_rect(topleft = tile.screen_pos).collidepoint(pygame.mouse.get_pos()):
                     line_colour = HIGHLIGHT_BLUE
                     grid_line_width = 2*(line_width)
@@ -201,37 +219,75 @@ def main():
             if event.type == pygame.MOUSEBUTTONUP:
                 #zoom in
                 if zoom_in_textpos.collidepoint(pygame.mouse.get_pos()):
-                    print ("ZOOM IN")
-                    tile_list, tile_width, tile_height, tiles_per_side  = the_map.zoom_in(tiles_per_side, screen_width, screen_height,
-                                                                                          tiles_per_side_GLOBAL, topleft_grid_onscreen,
-                                                                                          toolbar_height, tile_list, screen, line_width)
-
+                    tiles_per_side, zoom_tile_list, tile_width, tile_height = the_map.zoom_in(tiles_per_side,
+                                                                                              tiles_per_side_GLOBAL,
+                                                                                              topleft_grid,
+                                                                                              tile_list,
+                                                                                              screen_width,
+                                                                                              screen_height, 
+                                                                                              screen,
+                                                                                              line_width,
+                                                                                              toolbar_height)
                 #zoom out
                 if zoom_out_textpos.collidepoint(pygame.mouse.get_pos()):
-                    print ("ZOOM OUT")
-                    tile_list, tile_width, tile_height, tiles_per_side = the_map.zoom_out(tiles_per_side, screen_width, screen_height,
-                                                                                          tiles_per_side_GLOBAL, topleft_grid_onscreen,
-                                                                                          toolbar_height, tile_list, screen, line_width)
+                    tiles_per_side, zoom_tile_list, tile_width, tile_height = the_map.zoom_out(tiles_per_side,
+                                                                                               tiles_per_side_GLOBAL,
+                                                                                               topleft_grid,
+                                                                                               tile_list,
+                                                                                               screen_width,
+                                                                                               screen_height,
+                                                                                               screen,
+                                                                                               line_width,
+                                                                                               toolbar_height)
 
             #scroll
             if event.type == pygame.KEYDOWN:
                 #up
                 if event.key == pygame.K_w:
-                    topleft_grid_onscreen[1] = topleft_grid_onscreen[1] - 1  
+                    topleft_grid[1] = topleft_grid[1] + 1  
                 #down
                 if event.key == pygame.K_s:
-                    topleft_grid_onscreen[1] = topleft_grid_onscreen[1] + 1  
+                    topleft_grid[1] = topleft_grid[1] - 1  
                 #left
                 if event.key == pygame.K_a:
-                    topleft_grid_onscreen[0] = topleft_grid_onscreen[0] - 1  
+                    topleft_grid[0] = topleft_grid[0] + 1  
                 #right
                 if event.key == pygame.K_d:
-                    topleft_grid_onscreen[0] = topleft_grid_onscreen[0] + 1  
-                print topleft_grid_onscreen
-                tile_list = the_map.get_new_tile_list(tiles_per_side_GLOBAL, topleft_grid_onscreen, tile_width, tile_height, toolbar_height,
-                                                      tile_list, screen, line_width, tiles_per_side)
+                    topleft_grid[0] = topleft_grid[0] - 1  
+                print topleft_grid
+                
+                
+                #remake list with new topleft_grid and redraw
+                zoom_tile_list = the_map.get_zoom_tile_list(topleft_grid,
+                                                            tiles_per_side,
+                                                            tile_list,
+                                                            tile_width,
+                                                            tile_height,
+                                                            screen,
+                                                            line_width,
+                                                            toolbar_height)
 
-
+                #################################################################
+                #can do this better
+                #tiles_per_side, zoom_tile_list, tile_width, tile_height = the_map.zoom_in(tiles_per_side,
+                #                                                                          tiles_per_side_GLOBAL,
+                #                                                                          topleft_grid,
+                #                                                                          tile_list,
+                #                                                                          screen_width,
+                #                                                                          screen_height, 
+                #                                                                          screen,
+                #                                                                          line_width,
+                #                                                                          toolbar_height)
+                # 
+                # tiles_per_side, zoom_tile_list, tile_width, tile_height = the_map.zoom_out(tiles_per_side,
+                #                                                                           tiles_per_side_GLOBAL,
+                #                                                                           topleft_grid,
+                #                                                                           tile_list,
+                #                                                                           screen_width,
+                #                                                                           screen_height,
+                #                                                                           screen,
+                #                                                                           line_width,
+                #                                                                           toolbar_height)
 
         pygame.display.flip()
 
