@@ -33,7 +33,7 @@ game parameters
 toolbar_height = 40
 screen_width = 480 
 screen_height = 480
-screen_height_toolbar = 480 + 2*toolbar_height
+screen_height_toolbar = screen_height + 2*toolbar_height
 tiles_per_side_GLOBAL = 30#10
 OLIVE = (107, 142, 35)
 BLACK = (0, 0, 0)
@@ -159,6 +159,8 @@ def main():
     #Event loop
     while 1:
 
+        screen.fill(BROWN)
+
         #redraw tiles with highlight
         for j in range(0, len(tile_list)):
             tile_list_in = tile_list[j]
@@ -207,14 +209,14 @@ def main():
                 #zoom in
                 if zoom_in_textpos.collidepoint(pygame.mouse.get_pos()):
                     print ("ZOOM IN")
-                    tile_list, tile_width, tile_height, tiles_per_side  = the_map.zoom_in(tiles_per_side, screen_width, screen_height,
+                    tile_width, tile_height, tiles_per_side  = the_map.zoom_in(tiles_per_side, screen_width, screen_height,
                                                                                           tiles_per_side_GLOBAL, topleft_grid_onscreen,
                                                                                           toolbar_height, tile_list, screen, line_width)
 
                 #zoom out
                 if zoom_out_textpos.collidepoint(pygame.mouse.get_pos()):
                     print ("ZOOM OUT")
-                    tile_list, tile_width, tile_height, tiles_per_side = the_map.zoom_out(tiles_per_side, screen_width, screen_height,
+                    xtile_width, tile_height, tiles_per_side = the_map.zoom_out(tiles_per_side, screen_width, screen_height,
                                                                                           tiles_per_side_GLOBAL, topleft_grid_onscreen,
                                                                                           toolbar_height, tile_list, screen, line_width)
 
