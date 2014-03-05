@@ -15,10 +15,14 @@
 #    screen_pos of all tiles are adjusted to new values of tile width and height (done)
 #  Tile menus
 #    might need to make tile_width and tile_height an atribute of a tile so that it can be called by menus, currently its a once off variable t     hat is the same for all tiles, as it should be (no, just used tile width and height when using draw_menus)
-#    the menu will have a size based on the tile size when it was created and will change with zoom (done)
-#    menu close button
-#    menu darker, larger yellow border
+#    the menu will have a size based on the tile size when it was created and will change with zoom 
+#    menu close button (done)
+#    menu close X on the tile
+#    menu darker, larger yellow border (done)
 #    populate menu 
+#    CURRENT SYSTEM FOR CHANING SIZE OF MENU WHEN ZOOM CHANGES DOESNT WORK AT ALL
+#      far out zoom, menu too small, close in zoom menu way too big
+#      why not just give them a mixed size for all time? it doesnt need to depend on the zoom, it just has to be in the right place
 #
 #Problem:
 #  small problem with bottom toolbar disappearing for larger screen sizes(fixed)
@@ -50,6 +54,7 @@ BROWN = (139, 69, 19)
 WHITE = (255, 255, 255)
 menu_YELLOW = (255, 255, 0)
 line_width = 2
+menu_draw_factor = 5
 big_map = [[2, 2, 1, 1, 1, 1, 1, 1, 0, 0, 2, 2, 1, 1, 1, 1, 1, 1, 0, 0, 2, 2, 1, 1, 1, 1, 1, 1, 0, 0],
            [2, 2, 1, 1, 1, 1, 1, 1, 0, 0, 2, 2, 1, 1, 1, 1, 1, 1, 0, 0, 2, 2, 1, 0, 0, 0, 1, 1, 0, 0],
            [2, 2, 1, 1, 0, 1, 1, 1, 0, 0, 2, 2, 1, 0, 0, 0, 1, 1, 0, 0, 2, 2, 1, 1, 1, 0, 1, 1, 0, 0],
@@ -186,7 +191,7 @@ def main():
 
         #draw menus
         for menu in menu_list:
-            menu.draw_menu(tile_height, tile_width, screen)
+            menu.draw_menu(tile_height, tile_width, screen, tiles_per_side, menu_draw_factor)
             #redraw tiles with associated menus with a thicker yellow border
             menu.tile.draw_tile(screen, tile_width, tile_height, (7/2)*(line_width), menu_YELLOW)
 
@@ -244,6 +249,14 @@ def main():
                #                 tile.has_menu = False
 ###################################################################
 
+                #close menu if tile is clicked again
+                deleted_menu = False
+                for menu in menu_list:
+                    if menu.tile.surface.get_rect(topleft = menu.tile.screen_pos).collidepoint(pygame.mouse.get_pos()):
+                        menu.tile.has_menu = False
+                        menu_list.remove(menu)
+                        deleted_menu = True #so it doesnt create the menu again as soon as its been made
+
                 #make tile menu if tile clicked
                 for j in range(0, len(tile_list)):
                     tile_list_in = tile_list[j]
@@ -253,17 +266,12 @@ def main():
                             tile.surface.get_rect(topleft = tile.screen_pos).collidepoint(pygame.mouse.get_pos()) and
                             zoom_in_textpos.collidepoint(pygame.mouse.get_pos()) == 0 and
                             zoom_out_textpos.collidepoint(pygame.mouse.get_pos()) == 0 and
-                            tile.has_menu == False 
+                            tile.has_menu == False and
+                            deleted_menu == False
                             ):
-                            menu = menus.tile_menu(tile)
+                            menu = menus.tile_menu(tile, menu_draw_factor)
                             menu_list.append(menu)
-                            
-                for menu in menu_list:
-                    if menu.tile.surface.get_rect(topleft = menu.tile.screen_pos).collidepoint(pygame.mouse.get_pos()):
-                        menu.tile.has_menu = False
-                        menu_list.remove(menu)
-                       
-
+                    
                 #zoom in
                 if zoom_in_textpos.collidepoint(pygame.mouse.get_pos()):
                     print ("ZOOM IN")
