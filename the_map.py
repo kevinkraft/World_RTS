@@ -15,11 +15,12 @@ class tile(object):
     for map tiles, to contain everything to do with a tile, resources, sprites etc.
 
     """
-    def __init__(self, screen_pos, grid_pos, terrain_type, tile_surface = pygame.Surface((2,2))): #temporary tile_surface, reassigned later
+    def __init__(self, screen_pos, grid_pos, terrain_type, tile_surface = pygame.Surface((2,2)), has_menu = False): #temporary tile_surface, reassigned later
         self.screen_pos = screen_pos
         self.grid_pos = grid_pos
         self.terrain_type = terrain_type
         self.surface = tile_surface
+        self.has_menu = has_menu 
 
     def get_colour(self):
         if self.terrain_type == 0:
