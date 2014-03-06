@@ -54,7 +54,8 @@ BROWN = (139, 69, 19)
 WHITE = (255, 255, 255)
 menu_YELLOW = (255, 255, 0)
 line_width = 2
-menu_draw_factor = 5
+menu_width = 112
+menu_height = 112
 big_map = [[2, 2, 1, 1, 1, 1, 1, 1, 0, 0, 2, 2, 1, 1, 1, 1, 1, 1, 0, 0, 2, 2, 1, 1, 1, 1, 1, 1, 0, 0],
            [2, 2, 1, 1, 1, 1, 1, 1, 0, 0, 2, 2, 1, 1, 1, 1, 1, 1, 0, 0, 2, 2, 1, 0, 0, 0, 1, 1, 0, 0],
            [2, 2, 1, 1, 0, 1, 1, 1, 0, 0, 2, 2, 1, 0, 0, 0, 1, 1, 0, 0, 2, 2, 1, 1, 1, 0, 1, 1, 0, 0],
@@ -191,7 +192,7 @@ def main():
 
         #draw menus
         for menu in menu_list:
-            menu.draw_menu(tile_height, tile_width, screen, tiles_per_side, menu_draw_factor)
+            menu.draw_menu(tile_height, tile_width, screen)
             #redraw tiles with associated menus with a thicker yellow border
             menu.tile.draw_tile(screen, tile_width, tile_height, (7/2)*(line_width), menu_YELLOW)
 
@@ -229,26 +230,6 @@ def main():
             #mouse clicks
             if event.type == pygame.MOUSEBUTTONUP:
 
-############################################################################
-                # tried to get close menu to work with this, didnt work great as removes the wrong tile
-               # #make tile menu if tile clicked
-               # for j in range(0, len(tile_list)):
-               #     tile_list_in = tile_list[j]
-               #     for i in range(0, len(tile_list_in)):
-               #         tile = tile_list_in[i]
-               #         if (
-               #             tile.surface.get_rect(topleft = tile.screen_pos).collidepoint(pygame.mouse.get_pos()) and
-               #             zoom_in_textpos.collidepoint(pygame.mouse.get_pos()) == 0 and
-               #             zoom_out_textpos.collidepoint(pygame.mouse.get_pos()) == 0
-               #             ):
-               #             if tile.has_menu == False: #dont make a menu if it already has one
-               #                 menu = menus.tile_menu(tile)
-               #                 menu_list.append(menu)
-               #             else:
-               #                 menu_list.remove(menu)
-               #                 tile.has_menu = False
-###################################################################
-
                 #close menu if tile is clicked again
                 deleted_menu = False
                 for menu in menu_list:
@@ -269,7 +250,7 @@ def main():
                             tile.has_menu == False and
                             deleted_menu == False
                             ):
-                            menu = menus.tile_menu(tile, menu_draw_factor)
+                            menu = menus.tile_menu(tile, menu_width, menu_height)
                             menu_list.append(menu)
                     
                 #zoom in
