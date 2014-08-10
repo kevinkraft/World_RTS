@@ -6,7 +6,7 @@
 #
 #Add:
 #  maybe add xy coords onto screen
-#  Menu when tile is clicked
+#  Menu when tile is clicked(done)
 #  Menu which is specific to that tile. 
 #  Zoom(done) and scroll(done)
 #    start with making new bigger map size, 30x30 (done)
@@ -34,6 +34,8 @@ import pygame
 from pygame.locals import *
 import the_map
 import menus
+from random import randint
+import entity
 
 """
 
@@ -45,6 +47,8 @@ screen_width = 480#1300
 screen_height = 480#575
 screen_height_toolbar = screen_height + 2*toolbar_height
 tiles_per_side_GLOBAL = 30#10
+board_width = tiles_per_side_GLOBAL
+board_height = tiles_per_side_GLOBAL
 OLIVE = (107, 142, 35)
 BLACK = (0, 0, 0)
 BLUE = (0, 0, 205)
@@ -133,7 +137,24 @@ def main():
             tile.draw_tile(screen, tile_width, tile_height, line_width, BLACK)
             tile_list_in.append(tile)
         tile_list.append(tile_list_in)
-            
+    
+    #Initial sprites
+    #choose random start point
+    sprite_start_x = randint(0, board_width)
+    sprite_start_y = randint(0, board_height)
+    sprite_pos = [sprite_start_x, sprite_start_y]
+    print sprite_pos
+    sprite_tile = the_map.match_tile(sprite_pos, tile_list)
+    #Make sprite
+    sprite_1 = entity.sprite(sprite_pos, 1, sprite_tile)
+    tile.sprite_list.append(sprite_1)
+    sprite_list = [sprite_1]
+
+#    #draw sprites
+ #   for sprite in sprite_list:
+  #      sprite.draw_sprite(screen)
+
+
     #Display some text
     #font = pygame.font.Font(None, 36)
     #text = font.render("Hello There", 1, (10, 10, 10))
@@ -190,9 +211,16 @@ def main():
                     grid_line_width = line_width
                 tile.draw_tile(screen, tile_width, tile_height, grid_line_width, line_colour)
 
+#        #draw sprites
+ #       for sprite in sprite_list:
+  #          sprite.draw_sprite(screen)
+
+
+
+
         #draw menus
         for menu in menu_list:
-            menu.draw_menu(tile_height, tile_width, screen)
+            menu.draw_menu(tile_height, tile_width, screen, line_width)
             #redraw tiles with associated menus with a thicker yellow border
             menu.tile.draw_tile(screen, tile_width, tile_height, (7/2)*(line_width), menu_YELLOW)
 

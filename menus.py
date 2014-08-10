@@ -1,6 +1,7 @@
 import sys
 import pygame
 from pygame.locals import *
+import the_map
 
 OLIVE = (107, 142, 35)
 BLACK = (0, 0, 0)
@@ -31,24 +32,16 @@ class menu(object):
         self.menu_pos[0] = self.tile.screen_pos[0] + tile_width
         self.menu_pos[1] = self.tile.screen_pos[1] + tile_height  
 
-    #def get_menu_size(self, tile_width, tile_height, tiles_per_side, menu_draw_factor):
-
-###########################################
-       # self.menu_scale = ((menu_draw_factor)*(tile_width))/(tiles_per_side) #so new value if ratio of ... changes, i.e. zoomed  #
-       # self.menu_height = self.menu_scale*(tile_height)
-        #self.menu_width = self.menu_scale*(tile_width)
-#############################################
-
-    def draw_menu(self, tile_height, tile_width, screen):
+    def draw_menu(self, tile_height, tile_width, screen, line_width):
         self.get_menu_pos(tile_height, tile_width)
-        
-        #self.get_menu_size(tile_width, tile_height, tiles_per_side, menu_draw_factor)
-        
         self.surface = pygame.Surface((self.menu_width, self.menu_height))
         pygame.draw.rect(self.surface, menu_YELLOW, [0, 0, self.menu_width, self.menu_height]) #[x,y,width height]
         pointlist = [[0 ,0], [self.menu_width, 0], [self.menu_width, self.menu_height], [0, self.menu_height], [0, 0]]
         pygame.draw.lines(self.surface, dark_YELLOW, False, pointlist, self.menu_line_width)
+        #draw x on relevant tile
+        the_map.draw_close_x(self.tile, tile_width, tile_height, line_width, screen)
         screen.blit(self.surface, self.menu_pos)
+        pygame.display.flip()   
        
 class tile_menu(menu):
     """
